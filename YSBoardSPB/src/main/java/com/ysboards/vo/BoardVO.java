@@ -20,5 +20,4 @@ public class BoardVO {
 	private int rcdOrder;
 	
 	
-	
 }

@@ -7,6 +7,7 @@
 <c:set var="key" value="${param.key}" />
 
 <%
+	System.out.println(request.getContextPath());
 	// 페이지의 크기와 페이지 집합의 크기 추출
 	int pageRecords = (int)request.getAttribute("pageRecords");
 	int pageSets = (int)request.getAttribute("pageSets");
@@ -54,7 +55,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>게시글 리스트 출력</title>
-	<link rel="stylesheet" type="text/css" href="style.css">	
+	<link rel="stylesheet" type="text/css" href="/css/style.css">	
 </head>
 <body>
 
