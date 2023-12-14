@@ -5,21 +5,31 @@
 
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 
+<!-- 
 <c:set var="col" value="${param.col}" />
 <c:set var="key" value="${param.key}" />
 <c:set var="nowPage" value="${param.nowPage}" />
+ -->
 
 <%
+	String col = (String)request.getAttribute("col");
+	String key = (String)request.getAttribute("key");	
+	String nowPage = (String)request.getAttribute("nowPage");
+
 	pageContext.setAttribute("newLine", "\r\n");
 	pageContext.setAttribute("br", "<br>");
 %>
+
+<c:set var="col" value="<%=col %>"/>
+<c:set var="key" value="<%=key %>"/>
+<c:set var="nowPage" value="<%=nowPage %>"/>
 
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="UTF-8">
 	<title>게시글 출력</title>
-	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
 

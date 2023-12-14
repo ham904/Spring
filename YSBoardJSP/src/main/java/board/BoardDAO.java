@@ -80,13 +80,14 @@ public class BoardDAO {
 
 		try {			
 			// 각 페이지의 시작 인텍스 추출
-			int pageIndex =  pageRecords*(nowPage-1);
+			int pageIndex =  pageRecords*(nowPage-1) + 1;
 			
 			// DataSource로부터 Connection 객체 획득
 			conn = ds.getConnection();
 			
 			// 기본 질의 : 검색 키워드가 입력되지 않은 질의
-			Query="select rcdNO, rcdSubject, userName, rcdDate, rcdRefer, rcdIndent from ysboard";
+			Query += "select b.* from (select rownum rnum, b.* from(";
+			Query += "select rcdNO, rcdSubject, userName, rcdDate, rcdRefer, rcdIndent from ysboard";
 			
 			// 추가 질의 : 검색가 입력된다면 기본 질의에 추가되어야하는 질의			
 			if( (col != null) && (col.equals("rcdSubject")) ) {
@@ -97,7 +98,11 @@ public class BoardDAO {
 
 			// 정렬 방식 지정 질의
 			Query_Sub2 = " order by rcdGrpNO desc, rcdOrder asc";
+			// mysql
 			// Query_Sub2 += " limit "+ pageIndex +", "+pageRecords;
+			// oracle
+			Query_Sub2 += ") b) b";
+			Query_Sub2 += "where rnum between " + pageIndex + " and " + (pageIndex + pageRecords - 1);
 			
 			// 최종 질의 완성과 질의 수행 			
 			Query = Query + Query_Sub1 + Query_Sub2;

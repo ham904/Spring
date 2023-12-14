@@ -8,10 +8,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class HomeController {
 	
 	@GetMapping("/")
-	public ModelAndView home() {
+	public String home() {
 		System.out.println("[HomeController] /");
-		ModelAndView mav = new ModelAndView("redirect:/board/boards");
 		
-		return mav;
+		
+		return "home";
 	}
 }

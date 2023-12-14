@@ -21,7 +21,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>게시글 수정</title>
-	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
 

@@ -114,7 +114,7 @@
 				
 	</table>
 	
-	<form name="search" method="post" action="${contextPath}/boardListSearch.do">
+	<form name="search" method="post" action="${contextPath}/boardList.do">
 	<table align=center>
 		<tr>
 		
@@ -184,10 +184,18 @@
 			
 			<td align=right width=220>
 				<select name="col">
-					<option value="rcdSubject">제목</option>
-					<option value="rcdContent">내용</option>					
+					<c:choose>
+						<c:when test="${col=='rcdSubject'}">
+							<option value="rcdSubject" selected>제목</option>
+							<option value="rcdContent" >내용</option>
+						</c:when>
+						<c:otherwise>
+							<option value="rcdSubject">제목</option>
+							<option value="rcdContent" selected>내용</option>
+						</c:otherwise>
+					</c:choose>			
 				</select>
-				<input type="text" name="key" size=10>
+				<input type="text" name="key" size=10 value="${key}">
 				<input type="submit" value="검색">
 			</td>
 			

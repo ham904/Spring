@@ -5,22 +5,35 @@
 
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 
+<!-- 
 <c:set var="col" value="${param.col}" />
 <c:set var="key" value="${param.key}" />
 <c:set var="rNo" value="${param.rcdNO}" />
 <c:set var="nowPage" value="${param.nowPage}" />
+-->
 
 <%
+
+	String col = (String)request.getAttribute("col");
+	String key = (String)request.getAttribute("key");	
+	String nowPage = (String)request.getAttribute("nowPage");
+	String rNo = String.valueOf(request.getAttribute("rNo"));
+
 	pageContext.setAttribute("newLine", "\r\n");
 	pageContext.setAttribute("br", "<br>");
 %>
+
+<c:set var="col" value="<%=col %>"/>
+<c:set var="key" value="<%=key %>"/>
+<c:set var="nowPage" value="<%=nowPage %>"/>
+<c:set var="rNo" value="<%=rNo %>"/>
 
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="UTF-8">
 	<title>게시글 삭제</title>
-	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
 

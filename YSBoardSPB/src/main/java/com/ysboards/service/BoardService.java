@@ -27,7 +27,7 @@ public class BoardService {
 	
 	// boardList() : boardDAO의 selectAllRecords()를 호출해 모든 레코드 리스트 추출 ------------------------
 	public List<BoardVO> list(int nowPage, int pageRecords, String col, String key) throws Exception {
-		List<BoardVO> recordList = boardDAO.selectAllRecords(col, key);
+		List<BoardVO> recordList = boardDAO.selectAllRecords(nowPage, pageRecords, col, key);
 		return recordList;		
 	}
 	
@@ -107,6 +107,7 @@ public class BoardService {
 	// delete() : 패스워드가 일치하는지 조사하고 일치할 경우레코드 삭제 -----------------------------
 	 public void delete(int rNo, String password) throws Exception {
 		 if( boardDAO.checkPassword(rNo, password) ) {
+			 System.out.println("[BoardService] / delete 호출");
 			 boardDAO.deleteRecord(rNo);
 		 }
 	 }

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import com.ysboards.vo.BoardVO;
 
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -24,24 +23,22 @@ public class BoardDAO {
 	
 	public int newRcdNO() throws Exception{
 		int newNO = 0;
-		String Query = "select max(rcdNO) from ysboard";
+		String Query = "select nvl(max(rcdNO), 0) from ysboard";
 		List<Integer> list = jdbcTemplate.query(Query, new RowMapper<Integer>() {
 			@Override
 			public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-				int newNO = 0;
-				if(rs.next()) {
-					newNO = rs.getInt(1)+1;
-				}
-				return new Integer(newNO);
+								
+				return new Integer(rs.getInt(1)+1);
 			}			
 		});
 		newNO = list.get(0);
+		System.out.println(newNO);
 		return newNO;
 	}
 	
 	
 	public void insertRecord(BoardVO boardVO) throws Exception {
-		
+		System.out.println(boardVO.getRcdNO());
 		String Query="";
 		
 		Query = "insert into ysboard ";
@@ -84,30 +81,40 @@ public class BoardDAO {
 				);
 	}
 	
-	public List<BoardVO> selectAllRecords(String col, String key) throws Exception {
+	public List<BoardVO> selectAllRecords(int nowPage, int pageRecords, String col, String key) throws Exception {
 			
 			String Query="";
 			String Query_Sub1 = "";
 			String Query_Sub2 = "";
 			
-			Query="select rcdNO, rcdSubject, userName, rcdDate, rcdRefer, rcdIndent from ysboard";
-							
+			int pageIndex =  pageRecords*(nowPage-1) + 1;
+			
+			// 기본 질의 : 검색 키워드가 입력되지 않은 질의
+			Query += "select b.* from (select rownum rnum, b.* from(";
+			Query += "select rcdNO, rcdSubject, userName, rcdDate, rcdRefer, rcdIndent from ysboard";
+			
+			// 추가 질의 : 검색가 입력된다면 기본 질의에 추가되어야하는 질의			
 			if( (col != null) && (col.equals("rcdSubject")) ) {
 				Query_Sub1 = " where rcdSubject like '%"+key+"%'";				
 			} else if( (col != null) && col.equals("rcdContent") ) {
 				Query_Sub1 = " where rcdContent like '%"+key+"%'";
 			}
-	
+
+			// 정렬 방식 지정 질의
 			Query_Sub2 = " order by rcdGrpNO desc, rcdOrder asc";
-			// Query_Sub2 += " limit "+ pageIndex +", "+pageRecords;		
-					
+			// mysql
+			// Query_Sub2 += " limit "+ pageIndex +", "+pageRecords;
+			// oracle
+			Query_Sub2 += ") b) b ";
+			Query_Sub2 += "where rnum between " + pageIndex + " and " + (pageIndex + pageRecords - 1);
+			
 			Query = Query + Query_Sub1 + Query_Sub2;
 			
 			List<BoardVO> boards = jdbcTemplate.query(Query, new RowMapper<BoardVO>() {
 				@Override
 				public BoardVO mapRow(ResultSet rs, int rowNum) throws SQLException {
 					BoardVO boardVO = new BoardVO();
-					
+					System.out.println(rs.getInt("rcdNO"));
 					boardVO.setRcdNO(rs.getInt("rcdNO"));
 					boardVO.setRcdSubject(rs.getString("rcdSubject"));
 					boardVO.setUserName(rs.getString("userName"));
@@ -118,6 +125,7 @@ public class BoardDAO {
 					return boardVO;
 				}
 			});
+			
 			return boards;
 		}
 	
@@ -140,11 +148,8 @@ public class BoardDAO {
 		List<Integer> list = jdbcTemplate.query(Query, new RowMapper<Integer>() {
 			@Override
 			public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-				int totalRecord = 0;
-				
-				if( rs.next() ) totalRecord = rs.getInt(1);
-				
-				return new Integer(totalRecord);
+								
+				return new Integer(rs.getInt(1));
 			}
 		});
 		totalRecord = list.get(0);
@@ -208,7 +213,7 @@ public class BoardDAO {
 	public BoardVO getParentField(int rNo) throws Exception {
 		BoardVO replyField = new BoardVO();
 		
-		String Query = "select rcdSubject, rcdContent from ysboard where rcdNO=?";
+		String Query = "select rcdGrpNO, rcdIndent, rcdOrder from ysboard where rcdNO=?";
 		
 		List<BoardVO> boards = jdbcTemplate.query(Query,
 				new RowMapper<BoardVO>() {		
@@ -222,7 +227,7 @@ public class BoardDAO {
 						return replyField;
 						
 					}
-				});
+				},rNo);
 		replyField = boards.get(0);
 		return replyField;
 	}
@@ -235,18 +240,15 @@ public class BoardDAO {
 	}
 	
 	public boolean checkPassword(int rNo, String password) throws Exception {
+		System.out.printf("[BoardDAO] / checkPassword 호출, rNo: %d, password: %s \n", rNo, password);
 		String realPassword = "";
 		
 		String Query = "select rcdPass from ysboard where rcdNO=?";
 		List<String> list = jdbcTemplate.query(Query, new RowMapper<String>() {
 			@Override
-			public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-				String realPassword = "";
-				if( rs.next() ) {
-					realPassword = rs.getString("rcdPass");
-				}				
+			public String mapRow(ResultSet rs, int rowNum) throws SQLException {											
 				
-				return realPassword;
+				return rs.getString("rcdPass");
 			}
 			
 		}, rNo);
