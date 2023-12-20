@@ -101,7 +101,7 @@ public class BoardDAO {
 			// mysql
 			// Query_Sub2 += " limit "+ pageIndex +", "+pageRecords;
 			// oracle
-			Query_Sub2 += ") b) b";
+			Query_Sub2 += ") b) b ";
 			Query_Sub2 += "where rnum between " + pageIndex + " and " + (pageIndex + pageRecords - 1);
 			
 			// 최종 질의 완성과 질의 수행 			
